@@ -1,0 +1,58 @@
+#!/bin/sh
+
+check_alive() {
+    if ps aux | grep python | grep goagent > /dev/null; then 
+      echo "alive."
+    else
+      echo "dead."
+    fi
+}
+
+case $1 in
+  status|st)
+    echo "check the goagent..."
+    check_alive
+    exit 0
+    ;;
+  start)
+    if goagent st | grep alive > /dev/null; then
+      echo "arealy alive."
+      exit 1
+    fi
+    echo "starting the goagent..."
+    nohup ~/Tools/goagent/local/proxy.py > /tmp/goagent.log 2>&1 &
+    if check_alive | grep alive > /dev/null; then
+      echo "done."
+      exit 0
+    else
+      echo "fail."
+      exit 1
+    fi
+    ;;
+  stop)
+    if goagent st | grep dead > /dev/null; then
+      echo "arealy dead."
+      exit 1
+    fi
+    echo "stoping the goagent..."
+    pid="$(ps aux | grep pytho | grep goagent | awk '{print $2}')"
+    kill -9 "${pid}"
+    if check_alive | grep dead > /dev/null; then
+      echo "done."
+      exit 0
+    else
+      echo "fail."
+      exit 1
+    fi
+    ;;
+  list|ls)
+    tail -f /tmp/goagent.log
+    ;;
+  *)
+    echo "usage."
+    echo "\t$0 start"
+    echo "\t$0 stop"
+    echo "\t$0 status | st "
+    echo "\t$0 list | ls "
+    ;;
+esac
