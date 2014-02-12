@@ -4,7 +4,7 @@ the tool to manage the `goagent`
 ### install
 
     git clone https://github.com/jiahut/goagent.manage.git
-    ln -s goagent ~/bin/goagent
+    ln -s bin/goagent ~/bin/goagent
 
 ### usage
 
